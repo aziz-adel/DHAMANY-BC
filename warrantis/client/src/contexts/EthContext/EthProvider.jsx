@@ -3,6 +3,7 @@ import Web3 from "web3";
 import EthContext from "./EthContext";
 import { reducer, actions, initialState } from "./state";
 
+
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -27,23 +28,27 @@ function EthProvider({ children }) {
       }
     }, []);
 
-  useEffect(() => {
-    const tryInit = async () => {
-      try {
-        const artifact = require("../../contracts/WarrantyContract.json");
-        init(artifact);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    useEffect(() => {
+     
+        async function loadJson(){  
+          try{
+            const {abi} = require('./WarrantyContract.json');
+    
+            init(abi);
+          }
+          catch(e){
+          console.error(e)
+          }
+          }
+          loadJson();
 
-    tryInit();
-  }, [init]);
+}, [init])
 
   useEffect(() => {
     const events = ["chainChanged", "accountsChanged"];
     const handleChange = () => {
       init(state.artifact);
+      
     };
 
     events.forEach(e => window.ethereum.on(e, handleChange));
